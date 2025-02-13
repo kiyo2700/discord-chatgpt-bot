@@ -67,7 +67,7 @@ async def on_message(message):
     logging.info(f'🚀 OpenAIリクエスト: {username}「{cleaned_content}」')
 
     response = client_openai.chat.completions.create(
-        model="gpt-4",
+        model="gpt-4o-mini-2024-07-18",
         messages=conversation_histories[user_id]
     )
 
