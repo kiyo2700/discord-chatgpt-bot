@@ -25,6 +25,7 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
+    print(f'📩 受信メッセージ: {message.content}')
     if message.author.bot:
         return  # Botのメッセージは無視
 
@@ -32,18 +33,25 @@ async def on_message(message):
     if client.user in message.mentions:
         # メンション部分を削除（@BotName を除いたテキストのみ取得）
         content = message.content.replace(f'<@{client.user.id}>', '').strip()
+        print(f'🔍 メンション検出: {content}')
 
-        # OpenAIにリクエスト
-        response = openai.ChatCompletion.create(
-            model="gpt-4",
-            messages=[{"role": "user", "content": content}]
-        )
+        try:
 
-        # OpenAIの返答を取得
-        reply = response["choices"][0]["message"]["content"]
+            # OpenAIにリクエスト
+            response = openai.ChatCompletion.create(
+                model="gpt-4",
+                messages=[{"role": "user", "content": content}]
+            )
 
-        # 返信
-        await message.reply(reply)
+            # OpenAIの返答を取得
+            reply = response["choices"][0]["message"]["content"]
+            print(f'💬 OpenAIの返答: {reply}')
 
+            # 返信
+            await message.reply(reply)
+
+        except Exception as e:
+            print(f'⚠️ エラー発生: {e}')  # ← エラー内容を出力
+            await message.reply("⚠️ エラーが発生しました。ログを確認してください。")
 # Botを起動
 client.run(DISCORD_BOT_TOKEN)
