@@ -11,7 +11,7 @@ DISCORD_BOT_TOKEN = os.getenv("DISCORD_BOT_TOKEN")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 # OpenAI API設定
-openai.api_key = OPENAI_API_KEY
+client_openai = openai.OpenAI(api_key=OPENAI_API_KEY)
 
 # Discord Bot設定
 intents = discord.Intents.default()
@@ -42,12 +42,12 @@ async def on_message(message):
         conversation_histories[user_id].pop(0)  # 古いメッセージを削除
 
     # OpenAI APIに会話履歴を送信
-    response = openai.ChatCompletion.create(
+    response = client_openai.chat.completions.create(
         model="gpt-4",
         messages=conversation_histories[user_id]
     )
 
-    reply = response["choices"][0]["message"]["content"]
+    reply = response.choices[0].message.content
 
     # ボットの返答も履歴に追加
     conversation_histories[user_id].append({"role": "assistant", "content": reply})
